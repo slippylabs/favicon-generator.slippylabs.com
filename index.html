@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Favicon Generator // favicon-generator.slippylabs.com</title>
+<meta name="description" content="Build a real multi-resolution favicon.ico from any image, entirely in the browser — hand-written ICO container, per-size previews, PNG export.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Ccircle%20cx%3D%2232%22%20cy%3D%2234%22%20r%3D%2222%22%20fill%3D%22%231c8a52%22%20stroke%3D%22%2339ff8f%22%20stroke-width%3D%222%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2216%22%20r%3D%228%22%20fill%3D%22%231c8a52%22%20stroke%3D%22%2339ff8f%22%20stroke-width%3D%222%22%2F%3E%3Ccircle%20cx%3D%2244%22%20cy%3D%2216%22%20r%3D%228%22%20fill%3D%22%231c8a52%22%20stroke%3D%22%2339ff8f%22%20stroke-width%3D%222%22%2F%3E%3C%2Fsvg%3E">
+<meta name="theme-color" content="#050b10">
+<link rel="stylesheet" href="style.css?v=5">
+</head>
+<body>
+
+<div class="starfield"></div>
+<div class="scanlines"></div>
+
+<main class="page-wrap">
+  <div class="hud-panel wide">
+    <div class="corner tl"></div>
+    <div class="corner tr"></div>
+    <div class="corner bl"></div>
+    <div class="corner br"></div>
+
+    <div class="callsign-row">
+      <div class="toad-avatar-wrap">
+        <svg class="toad-avatar" width="46" height="46" viewBox="0 0 64 64">
+          <circle cx="32" cy="34" r="22" fill="#1c8a52" stroke="#39ff8f" stroke-width="2"/>
+          <circle cx="20" cy="16" r="8" fill="#1c8a52" stroke="#39ff8f" stroke-width="2"/>
+          <circle cx="44" cy="16" r="8" fill="#1c8a52" stroke="#39ff8f" stroke-width="2"/>
+          <circle cx="20" cy="16" r="3.5" fill="#050b10"/>
+          <circle cx="44" cy="16" r="3.5" fill="#050b10"/>
+          <ellipse cx="24" cy="32" rx="4.5" ry="5.5" fill="#050b10"/>
+          <ellipse cx="40" cy="32" rx="4.5" ry="5.5" fill="#050b10"/>
+          <circle cx="24" cy="30" r="1.4" fill="#39ff8f"/>
+          <circle cx="40" cy="30" r="1.4" fill="#39ff8f"/>
+          <path d="M22 42 Q32 48 42 42" stroke="#050b10" stroke-width="2" fill="none" stroke-linecap="round"/>
+        </svg>
+        <div class="lock-reticle"></div>
+      </div>
+      <span class="callsign">Workshop Division // Tool</span>
+      <div class="nav-links">
+        <a href="https://projects.slippylabs.com/" class="logout-link">&larr; Archive</a>
+      </div>
+    </div>
+
+    <h1>FAVICON GENERATOR</h1>
+    <p class="subtitle">Turn any image into a multi-size favicon.ico, written byte by byte in your browser. Pick the sizes you want, check the previews at actual pixel size, and download.</p>
+
+    <div class="tool-controls">
+      <input class="tool-file-input" id="img-input" type="file" accept="image/*">
+      <button class="tool-btn ghost" id="pattern-btn">Use Test Pattern</button>
+      <button class="tool-btn" id="ico-btn">Download .ico</button>
+      <button class="tool-btn ghost" id="png-btn">Download 512px PNG</button>
+    </div>
+
+    <div class="tool-checks" id="size-checks">
+      <label class="tool-check"><input type="checkbox" value="16" checked> 16</label>
+      <label class="tool-check"><input type="checkbox" value="32" checked> 32</label>
+      <label class="tool-check"><input type="checkbox" value="48" checked> 48</label>
+      <label class="tool-check"><input type="checkbox" value="64" checked> 64</label>
+      <label class="tool-check"><input type="checkbox" value="128"> 128</label>
+      <label class="tool-check"><input type="checkbox" value="256"> 256</label>
+    </div>
+
+    <div class="tool-controls">
+      <label class="tool-field-label" for="bg-mode">Background</label>
+      <select class="tool-select" id="bg-mode">
+        <option value="transparent">Keep transparency</option>
+        <option value="solid">Fill with colour</option>
+      </select>
+      <input class="tool-color-input" id="bg-color" type="color" value="#050b10">
+      <label class="tool-field-label" for="fit-select">Fit</label>
+      <select class="tool-select" id="fit-select">
+        <option value="contain">Contain — whole image</option>
+        <option value="cover">Cover — fill and crop</option>
+        <option value="stretch">Stretch</option>
+      </select>
+    </div>
+
+    <div class="tool-field-row">
+      <label class="tool-field-label" for="pad-slider">Padding &mdash; <span id="pad-label">0</span>%</label>
+      <div class="tool-slider-row">
+        <input type="range" id="pad-slider" min="0" max="30" value="0">
+      </div>
+    </div>
+
+    <div class="tool-field-row">
+      <label class="tool-field-label" for="radius-slider">Corner radius &mdash; <span id="radius-label">0</span>%</label>
+      <div class="tool-slider-row">
+        <input type="range" id="radius-slider" min="0" max="50" value="0">
+      </div>
+    </div>
+
+    <div class="tool-field-row">
+      <span class="tool-field-label">Previews at actual size</span>
+      <div class="icon-previews" id="previews"></div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat-tile"><span class="stat-value" id="stat-count">0</span><span class="stat-label">Sizes In File</span></div>
+      <div class="stat-tile"><span class="stat-value" id="stat-bytes">&mdash;</span><span class="stat-label">.ico Size</span></div>
+      <div class="stat-tile"><span class="stat-value" id="stat-format">&mdash;</span><span class="stat-label">Encoding</span></div>
+    </div>
+
+    <p class="tool-output" id="status-line" style="min-height:auto">Load an image or press Use Test Pattern.</p>
+
+    <p class="tool-note">The <code>.ico</code> container is written here by hand, not by the browser. Sizes up to 64 are stored as 32-bit BMP frames &mdash; which store their rows bottom-up and their channels as blue-green-red-alpha, the two details that make hand-rolled ICO files come out upside down or with the red and blue swapped. Sizes of 128 and above are stored as embedded PNG, which every browser and every Windows since Vista reads, and which keeps the file from ballooning: one 256&times;256 BMP frame alone would be 256&nbsp;KB.</p>
+
+    <div class="comm-window">
+      <div class="comm-portrait">
+        <svg width="36" height="36" viewBox="0 0 64 64">
+          <circle cx="32" cy="34" r="22" fill="#1c8a52" stroke="#39ff8f" stroke-width="2"/>
+          <circle cx="20" cy="16" r="8" fill="#1c8a52" stroke="#39ff8f" stroke-width="2"/>
+          <circle cx="44" cy="16" r="8" fill="#1c8a52" stroke="#39ff8f" stroke-width="2"/>
+          <circle cx="20" cy="16" r="3.5" fill="#050b10"/>
+          <circle cx="44" cy="16" r="3.5" fill="#050b10"/>
+          <ellipse cx="24" cy="32" rx="4.5" ry="5.5" fill="#050b10"/>
+          <ellipse cx="40" cy="32" rx="4.5" ry="5.5" fill="#050b10"/>
+          <circle cx="24" cy="30" r="1.4" fill="#39ff8f"/>
+          <circle cx="40" cy="30" r="1.4" fill="#39ff8f"/>
+          <path d="M22 42 Q32 48 42 42" stroke="#050b10" stroke-width="2" fill="none" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="comm-body">
+        <div class="comm-label"><span class="dot"></span> Incoming Transmission &mdash; Slippy</div>
+        <p>"Sixteen pixels square. Whatever you put there, half of it is going to be a guess."</p>
+      </div>
+    </div>
+
+    <a href="https://projects.slippylabs.com/" class="hud-btn">&larr; Back to Archive</a>
+  </div>
+</main>
+
+<script>
+const PREVIEW_SIZES = [16, 32, 48, 64, 128, 256];
+const PNG_THRESHOLD = 128; // at and above this, embed PNG instead of BMP
+
+const imgInput = document.getElementById('img-input');
+const statusLine = document.getElementById('status-line');
+const previews = document.getElementById('previews');
+
+let sourceImage = null;
+
+// A deterministic pattern with a different colour in each quadrant and one
+// transparent corner — if rows or channels come out wrong, it is obvious.
+function buildTestPattern() {
+  const c = document.createElement('canvas');
+  c.width = 256; c.height = 256;
+  const g = c.getContext('2d');
+  g.clearRect(0, 0, 256, 256);
+  g.fillStyle = '#ff0000'; g.fillRect(0, 0, 128, 128);
+  g.fillStyle = '#00ff00'; g.fillRect(128, 0, 128, 128);
+  g.fillStyle = '#0000ff'; g.fillRect(0, 128, 128, 128);
+  // bottom-right quadrant deliberately left transparent
+  return c;
+}
+
+function selectedSizes() {
+  return Array.from(document.querySelectorAll('#size-checks input:checked'))
+    .map(cb => parseInt(cb.value, 10))
+    .sort((a, b) => a - b);
+}
+
+function roundedPath(g, size, radiusPct) {
+  const r = (radiusPct / 100) * size;
+  g.beginPath();
+  g.moveTo(r, 0);
+  g.lineTo(size - r, 0);
+  g.quadraticCurveTo(size, 0, size, r);
+  g.lineTo(size, size - r);
+  g.quadraticCurveTo(size, size, size - r, size);
+  g.lineTo(r, size);
+  g.quadraticCurveTo(0, size, 0, size - r);
+  g.lineTo(0, r);
+  g.quadraticCurveTo(0, 0, r, 0);
+  g.closePath();
+}
+
+function renderSize(size) {
+  const canvas = document.createElement('canvas');
+  canvas.width = size;
+  canvas.height = size;
+  const g = canvas.getContext('2d');
+  g.clearRect(0, 0, size, size);
+
+  const radius = parseInt(document.getElementById('radius-slider').value, 10);
+  if (radius > 0) { roundedPath(g, size, radius); g.clip(); }
+
+  if (document.getElementById('bg-mode').value === 'solid') {
+    g.fillStyle = document.getElementById('bg-color').value;
+    g.fillRect(0, 0, size, size);
+  }
+
+  if (sourceImage) {
+    const pad = (parseInt(document.getElementById('pad-slider').value, 10) / 100) * size;
+    const box = size - pad * 2;
+    const fit = document.getElementById('fit-select').value;
+    const sw = sourceImage.width, sh = sourceImage.height;
+    if (fit === 'stretch') {
+      g.drawImage(sourceImage, pad, pad, box, box);
+    } else {
+      const scale = fit === 'cover' ? Math.max(box / sw, box / sh) : Math.min(box / sw, box / sh);
+      const dw = sw * scale, dh = sh * scale;
+      g.drawImage(sourceImage, pad + (box - dw) / 2, pad + (box - dh) / 2, dw, dh);
+    }
+  }
+  return canvas;
+}
+
+// ---------------------------------------------------------------- ICO writer
+function bmpFrame(canvas) {
+  const size = canvas.width;
+  const px = canvas.getContext('2d').getImageData(0, 0, size, size).data;
+  const rowMask = Math.ceil(size / 8);
+  const maskStride = Math.ceil(rowMask / 4) * 4; // AND-mask rows pad to 4 bytes
+  const headerLen = 40;
+  const xorLen = size * size * 4;
+  const andLen = maskStride * size;
+  const buf = new ArrayBuffer(headerLen + xorLen + andLen);
+  const view = new DataView(buf);
+  const bytes = new Uint8Array(buf);
+
+  // BITMAPINFOHEADER — height is doubled because the AND mask counts too.
+  view.setUint32(0, 40, true);
+  view.setInt32(4, size, true);
+  view.setInt32(8, size * 2, true);
+  view.setUint16(12, 1, true);
+  view.setUint16(14, 32, true);
+  view.setUint32(16, 0, true);          // BI_RGB, no compression
+  view.setUint32(20, xorLen + andLen, true);
+
+  let o = headerLen;
+  for (let y = size - 1; y >= 0; y--) {   // BMP rows run bottom-up
+    for (let x = 0; x < size; x++) {
+      const i = (y * size + x) * 4;
+      bytes[o++] = px[i + 2];             // B
+      bytes[o++] = px[i + 1];             // G
+      bytes[o++] = px[i];                 // R
+      bytes[o++] = px[i + 3];             // A
+    }
+  }
+  // AND mask stays all-zero: the alpha channel above already carries opacity.
+  return bytes;
+}
+
+async function pngFrame(canvas) {
+  const blob = await new Promise(res => canvas.toBlob(res, 'image/png'));
+  return new Uint8Array(await blob.arrayBuffer());
+}
+
+function assembleIco(frames) {
+  const headerLen = 6 + frames.length * 16;
+  const total = headerLen + frames.reduce((sum, f) => sum + f.data.length, 0);
+  const buf = new ArrayBuffer(total);
+  const view = new DataView(buf);
+  const bytes = new Uint8Array(buf);
+
+  view.setUint16(0, 0, true);              // reserved
+  view.setUint16(2, 1, true);              // 1 = icon
+  view.setUint16(4, frames.length, true);
+
+  let offset = headerLen;
+  frames.forEach((frame, i) => {
+    const e = 6 + i * 16;
+    // 256 is stored as 0 — the field is a single byte.
+    bytes[e] = frame.size >= 256 ? 0 : frame.size;
+    bytes[e + 1] = frame.size >= 256 ? 0 : frame.size;
+    bytes[e + 2] = 0;                      // palette size
+    bytes[e + 3] = 0;                      // reserved
+    view.setUint16(e + 4, 1, true);        // colour planes
+    view.setUint16(e + 6, 32, true);       // bits per pixel
+    view.setUint32(e + 8, frame.data.length, true);
+    view.setUint32(e + 12, offset, true);
+    bytes.set(frame.data, offset);
+    offset += frame.data.length;
+  });
+  return bytes;
+}
+
+async function buildIco() {
+  const sizes = selectedSizes();
+  if (!sizes.length) throw new Error('Pick at least one size.');
+  const frames = [];
+  for (const size of sizes) {
+    const canvas = renderSize(size);
+    frames.push({
+      size: size,
+      data: size >= PNG_THRESHOLD ? await pngFrame(canvas) : bmpFrame(canvas),
+    });
+  }
+  return { bytes: assembleIco(frames), sizes: sizes };
+}
+
+// Redrawing is async because PNG frames need toBlob; a token keeps a slow
+// earlier build from overwriting the stats of a newer one.
+let buildToken = 0;
+
+async function refresh() {
+  document.getElementById('pad-label').textContent = document.getElementById('pad-slider').value;
+  document.getElementById('radius-label').textContent = document.getElementById('radius-slider').value;
+
+  previews.textContent = '';
+  const sizes = selectedSizes();
+  for (const size of PREVIEW_SIZES) {
+    if (!sizes.includes(size)) continue;
+    const wrap = document.createElement('div');
+    wrap.className = 'icon-preview';
+    wrap.appendChild(renderSize(size));
+    const label = document.createElement('span');
+    label.textContent = size + '×' + size;
+    wrap.appendChild(label);
+    previews.appendChild(wrap);
+  }
+
+  document.getElementById('stat-count').textContent = String(sizes.length);
+  document.getElementById('stat-format').textContent =
+    sizes.some(s => s >= PNG_THRESHOLD) ? (sizes.some(s => s < PNG_THRESHOLD) ? 'BMP + PNG' : 'PNG') : 'BMP';
+
+  if (!sourceImage) return;
+  const token = ++buildToken;
+  try {
+    const ico = await buildIco();
+    if (token !== buildToken) return;
+    document.getElementById('stat-bytes').textContent = (ico.bytes.length / 1024).toFixed(1) + ' KB';
+    statusLine.classList.remove('error-text');
+    statusLine.textContent = 'Ready — ' + sizes.join(', ') + ' px in one file.';
+    window.__lastIco = ico.bytes;
+  } catch (err) {
+    if (token !== buildToken) return;
+    statusLine.classList.add('error-text');
+    statusLine.textContent = err.message;
+  }
+}
+
+function download(bytes, name, type) {
+  const blob = new Blob([bytes], { type: type });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = name;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+
+imgInput.addEventListener('change', () => {
+  const file = imgInput.files && imgInput.files[0];
+  if (!file) return;
+  const img = new Image();
+  const url = URL.createObjectURL(file);
+  img.onload = () => { URL.revokeObjectURL(url); sourceImage = img; refresh(); };
+  img.onerror = () => {
+    URL.revokeObjectURL(url);
+    statusLine.classList.add('error-text');
+    statusLine.textContent = 'That file could not be read as an image.';
+  };
+  img.src = url;
+});
+
+document.getElementById('pattern-btn').addEventListener('click', () => {
+  imgInput.value = '';
+  sourceImage = buildTestPattern();
+  refresh();
+});
+
+document.getElementById('ico-btn').addEventListener('click', async () => {
+  try {
+    const ico = await buildIco();
+    download(ico.bytes, 'favicon.ico', 'image/x-icon');
+  } catch (err) {
+    statusLine.classList.add('error-text');
+    statusLine.textContent = err.message;
+  }
+});
+
+document.getElementById('png-btn').addEventListener('click', async () => {
+  const canvas = renderSize(512);
+  const blob = await new Promise(res => canvas.toBlob(res, 'image/png'));
+  download(blob, 'icon-512.png', 'image/png');
+});
+
+['bg-mode', 'bg-color', 'fit-select'].forEach(id =>
+  document.getElementById(id).addEventListener('input', refresh));
+['pad-slider', 'radius-slider'].forEach(id =>
+  document.getElementById(id).addEventListener('input', refresh));
+document.querySelectorAll('#size-checks input').forEach(cb =>
+  cb.addEventListener('change', refresh));
+
+// Arrive with something on screen rather than six empty checkerboards.
+sourceImage = buildTestPattern();
+refresh();
+</script>
+</body>
+</html>
